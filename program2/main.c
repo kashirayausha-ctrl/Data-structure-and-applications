@@ -63,9 +63,10 @@ void infixtopostfix(STACK *s,char infix[20]){
 int main(){
     char infix[20];
     STACK s;
-    s.top==-1;
+    s.top=-1;
     printf("\nEnter a infix expression\n");
     scanf("%s",infix);
     infixtopostfix(&s,infix);
     return 0;
 }
+
