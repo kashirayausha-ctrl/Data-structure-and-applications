@@ -1,0 +1,302 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int co, po;
+    struct node* addr;
+};
+typedef struct node* NODE;
+
+NODE insertend(NODE start, int co, int po) {
+    NODE temp, cur;
+    temp = (NODE)malloc(sizeof(struct node));
+    temp->co = co;
+    temp->po = po;
+    temp->addr = NULL;
+
+    if (start == NULL)
+        return temp;
+
+    cur = start;
+    while (cur->addr != NULL)
+        cur = cur->addr;
+
+    cur->addr = temp;
+    return start;
+}
+
+void display(NODE start) {
+    NODE temp;
+
+    if (start == NULL) {
+        printf("\nPolynomial empty.\n");
+        return;
+    }
+
+    temp = start;
+    while (temp != NULL) {
+        printf("%d*x^%d", temp->co, temp->po);
+        temp = temp->addr;
+        if (temp != NULL)
+            printf(" + ");
+    }
+    printf("\n");
+}
+
+NODE addterm(NODE res, int co, int po) {
+    NODE temp, cur;
+
+    if (co == 0)
+        return res;
+
+    temp = (NODE)malloc(sizeof(struct node));
+    temp->co = co;
+    temp->po = po;
+    temp->addr = NULL;
+
+    if (res == NULL)
+        return temp;
+
+    cur = res;
+
+    while (cur != NULL) {
+        if (cur->po == po) {
+            cur->co += co;
+            return res;
+        }
+        cur = cur->addr;
+    }
+
+    return insertend(res, co, po);
+}
+
+NODE multiply(NODE poly1, NODE poly2) {
+    NODE p1, p2, res = NULL;
+
+    for (p1 = poly1; p1 != NULL; p1 = p1->addr) {
+        for (p2 = poly2; p2 != NULL; p2 = p2->addr) {
+
+            res = addterm(res, p1->co * p2->co, p1->po + p2->po);
+
+        }
+    }
+
+    return res;
+}
+
+int main() {
+    NODE poly1 = NULL, poly2 = NULL, poly = NULL;
+    int n, i, co, po;
+
+    printf("Read no. of terms of 1st polynomial: ");
+    scanf("%d", &n);
+    for (i = 1; i <= n; i++) {
+        printf("Read co and po of term %d: ", i);
+        scanf("%d %d", &co, &po);
+        poly1 = insertend(poly1, co, po);
+    }
+    printf("First polynomial: ");
+    display(poly1);
+
+    printf("Read no. of terms of 2nd polynomial: ");
+    scanf("%d", &n);
+    for (i = 1; i <= n; i++) {
+        printf("Read co and po of term %d: ", i);
+        scanf("%d %d", &co, &po);
+        poly2 = insertend(poly2, co, po);
+    }
+    printf("Second polynomial: ");
+    display(poly2);
+
+    poly = multiply(poly1, poly2);
+
+    printf("Resultant polynomial: ");
+    display(poly);
+
+    return 0;
+}
+Program 6
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node{
+    int r,c,data;
+    struct node *next;
+    struct node *prev;
+};
+typedef struct node *NODE;
+
+NODE insertend(NODE start, int r, int c, int item){
+    NODE temp,cur;
+    temp=(NODE)malloc(sizeof(struct node));
+    temp->r=r;
+    temp->c=c;
+    temp->data=item;
+    temp->next=NULL;
+    temp->prev=NULL;
+    if(start==NULL)
+        return temp;
+    cur=start;
+    while(cur->next!=NULL)
+        cur=cur->next;
+    cur->next=temp;
+    temp->prev=cur;
+    return start;
+}
+
+void display(NODE start){
+    NODE temp;
+    if(start==NULL)
+        printf("\nList Empty.\n");
+    else{
+        printf("\nRow\tColumn\tData\n");
+        temp=start;
+        while(temp!=NULL){
+            printf("%d\t%d\t%d\n",temp->r,temp->c,temp->data);
+            temp=temp->next;
+        }
+    }
+}
+
+void displaymat(NODE start, int m,int n){
+    NODE temp=start;
+    int i,j;
+    for(i=1;i<=m;i++){
+        for(j=1;j<=n;j++){
+        if(temp!=NULL && temp->r==i && temp->c==j){
+            printf("%d\t",temp->data);
+            temp=temp->next;
+        }
+        else{
+            printf("0\t");
+        }
+        }
+        printf("\n");
+    }
+
+}
+
+int main(){
+    int i,j,m,n;
+    int item;
+    NODE start=NULL;
+    printf("\n Read order of matrix:\n");
+    scanf("%d%d",&m,&n);
+    printf("\nRead elements:\n");
+    for(i=1;i<=m;i++){
+        for(j=1;j<=n;j++){
+            scanf("%d",&item);
+            if(item!=0)
+                start=insertend(start,i,j,item);
+        }
+    }
+    display(start);
+    printf("\nSparse Matrix is:\n");
+    displaymat(start,m,n);
+    return 0;
+}
+
+program 7
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct node{
+    int data;
+    struct node *left;
+    struct node *right;
+};
+typedef struct node *NODE;
+
+NODE bst(NODE root , int key){
+    NODE temp,cur,prev;
+    temp=(NODE)malloc(sizeof(struct node));
+    temp->data=key;
+    temp->left=NULL;
+    temp->right=NULL;
+    if (root==NULL)
+        return temp;
+    cur=root;
+    prev=NULL;
+    while(cur!=NULL){
+        prev=cur;
+        if(key<cur->data)
+            cur=cur->left;
+        else
+            cur=cur->right;
+    }
+    
+    if(key<prev->data)
+        prev->left=temp;
+    else
+        prev->right=temp;
+    return root;
+}
+
+void preorder(NODE root){
+    if(root!=NULL){
+        printf("%d\t",root->data);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+void inorder(NODE root){
+    if(root!=NULL){
+        inorder(root->left);
+        printf("%d\t",root->data);
+        inorder(root->right);
+    }
+}
+
+void postorder(NODE root){
+    if(root!=NULL){
+        postorder(root->left);
+        postorder(root->right);
+        printf("%d\t",root->data);
+    }
+}
+
+int main(){
+    NODE root=NULL;
+    int item,ch;
+    for(;;){
+        printf("\n1.Insert\n2.PreOrder\n3.InOrder\n4.PostOrder\n5.Exit");
+        printf("\nRead Choice:\n");
+        scanf("%d",&ch);
+        switch(ch){
+
+            case 1:
+            printf("\nRead Item:\n");
+            scanf("%d",&item);
+            root=bst(root,item);
+            break;
+
+            case 2:
+            printf("\nPreOrder Traversal\n");
+            preorder(root);
+            break;
+
+            case 3:
+            printf("\nInOrder Traversal\n");
+            inorder(root);
+            break;
+
+            case 4:
+            printf("\nPostOrder Traversal\n");
+            postorder(root);
+            break;
+
+            default:
+            exit(0);
+            break;
+        }
+    }
+    return 0;
+}
+
+
+program 8
